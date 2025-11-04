@@ -38,6 +38,7 @@ export default function App() {
   const [showCart, setShowCart] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
 
   const products: Product[] = [
     {
@@ -90,10 +91,10 @@ export default function App() {
     },
   ];
 
-  const showToast = (message: string) => {
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
     setToastMessage(message);
+    setToastType(type);
     setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000);
   };
 
   const addToCart = (product: Product) => {
@@ -101,14 +102,14 @@ export default function App() {
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
       if (existingItem) {
-        showToast(`Updated ${product.name} quantity`);
+        showToast(`Updated ${product.name} quantity`, 'success');
         return prevCart.map(item =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      showToast(`Added ${product.name} to cart`);
+      showToast(`Added ${product.name} to cart`, 'success');
       return [...prevCart, { ...product, quantity: 1 }];
     });
   };
@@ -158,7 +159,7 @@ export default function App() {
       <Toast
         message={toastMessage}
         visible={toastVisible}
-        type="success"
+        type={toastType}
         onHide={() => setToastVisible(false)}
       />
 
@@ -303,7 +304,7 @@ export default function App() {
             <Button
               title="Proceed to Checkout"
               onPress={() => {
-                showToast('Checkout coming soon!');
+                showToast('Checkout coming soon!', 'info');
                 setShowCart(false);
               }}
               variant="primary"
